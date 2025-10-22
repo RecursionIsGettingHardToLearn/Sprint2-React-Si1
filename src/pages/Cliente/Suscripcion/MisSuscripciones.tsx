@@ -1,27 +1,22 @@
+// Componente MisSuscripciones.tsx
+
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import api from '../../../app/axiosInstance'; // Importar useHistory
+import api from '../../../app/axiosInstance';
 
-const SuscripcionList: React.FC = () => {
+const MisSuscripciones: React.FC = () => {
     const [suscripciones, setSuscripciones] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [loadingAccion, setLoadingAccion] = useState<number | null>(null);
-    const [suscripcionActiva, setSuscripcionActiva] = useState<boolean>(false); // Estado para verificar si hay suscripción activa
 
     useEffect(() => {
         const loadSuscripciones = async () => {
             try {
                 setLoading(true);
-                const { data } = await api.get('/suscripciones');
-                setSuscripciones(data.results || data);
-
-                // Verificar si ya existe una suscripción activa
-                const { data: suscripcionesCliente } = await api.get('/suscripciones-clientes/mis-suscripciones');
-                if (suscripcionesCliente.length > 0) {
-                    setSuscripcionActiva(true); // Si ya tiene una suscripción activa
-                }
+                const { data } = await api.get('/suscripciones-clientes/mis-suscripciones');
+                setSuscripciones(data || []);
             } catch (err) {
                 setError('No se pudieron cargar las suscripciones. Intenta más tarde.');
                 console.error('Error al cargar suscripciones:', err);
@@ -34,11 +29,6 @@ const SuscripcionList: React.FC = () => {
     }, []);
 
     const handlePagarConStripe = async (suscripcionId: number) => {
-        if (suscripcionActiva) {
-            alert('Ya tienes una suscripción activa.');
-            return;
-        }
-
         setLoadingAccion(suscripcionId);
         try {
             const response = await api.post('/pagos/crear_sesion_stripe/', {
@@ -97,7 +87,7 @@ const SuscripcionList: React.FC = () => {
     return (
         <div className="min-h-screen bg-gray-50 p-4">
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-2xl font-bold text-gray-900 mb-6">Suscripciones</h1>
+                <h1 className="text-2xl font-bold text-gray-900 mb-6">Mis Suscripciones</h1>
 
                 {suscripciones.length === 0 ? (
                     <div className="bg-white rounded-lg shadow p-8 text-center">
@@ -109,30 +99,28 @@ const SuscripcionList: React.FC = () => {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Nombre
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Precio
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Tipo
-                                        </th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Acción
-                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado Pago</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de Inicio</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de Fin</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Días Restantes</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {suscripciones.map((suscripcion) => (
                                         <tr key={suscripcion.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{suscripcion.nombre}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatCurrency(suscripcion.precio)}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{suscripcion.tipo}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{suscripcion.suscripcion.nombre}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatCurrency(suscripcion.suscripcion.precio)}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{suscripcion.suscripcion.tipo}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{suscripcion.estado_pago ? 'Pagada' : 'Pendiente'}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{suscripcion.fecha_inicio}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{suscripcion.fecha_fin}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{suscripcion.dias_restantes}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                {suscripcion.estado_pago ? (
-                                                    <span className="text-green-500">Suscripción Pagada</span>
-                                                ) : (
+                                                {!suscripcion.estado_pago && (
                                                     <button
                                                         onClick={() => handlePagarConStripe(suscripcion.id)}
                                                         className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm transition"
@@ -153,19 +141,9 @@ const SuscripcionList: React.FC = () => {
                         </div>
                     </div>
                 )}
-
-                {/* Agregar el botón para ver mis suscripciones */}
-                <div className="mt-6 text-center">
-                    <button
-                        onClick={() => window.location.href = '/cliente/mis-suscripciones'}
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm transition"
-                    >
-                        Ver mis suscripciones
-                    </button>
-                </div>
             </div>
         </div>
     );
 };
 
-export default SuscripcionList;
+export default MisSuscripciones;

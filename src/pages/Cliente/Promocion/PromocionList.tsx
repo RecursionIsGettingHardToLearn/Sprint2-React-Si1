@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 //import { useNavigate } from 'react-router-dom';
 import { fetchPromociones } from '../../../api/api-promocion';
 import type { Promocion } from '../../../types/type-promocion';
-import api from '../../../app/axiosInstance'; // Asegúrate de importar tu instancia de axios para hacer la solicitud API
 
 const PromocionList: React.FC = () => {
   const [promociones, setPromociones] = useState<Promocion[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [loadingAccion, setLoadingAccion] = useState<number | null>(null);
+//const [loadingAccion, setLoadingAccion] = useState<number | null>(null);
 //  const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,7 +23,7 @@ const PromocionList: React.FC = () => {
     };
     loadPromociones();
   }, []);
-
+/*
   const handlePagarConStripe = async (promocionId: number) => {
     setLoadingAccion(promocionId);
     try {
@@ -51,7 +50,7 @@ const PromocionList: React.FC = () => {
       setLoadingAccion(null);
     }
   };
-
+*/
   return (
     <div className="container mx-auto p-4 md:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 sm:gap-0">
@@ -79,19 +78,7 @@ const PromocionList: React.FC = () => {
                     <span className="text-sm text-gray-500">Fecha Inicio: {promocion.fecha_ini}</span>
                     <span className="text-sm text-gray-500">Fecha Fin: {promocion.fecha_fin}</span>
                   </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handlePagarConStripe(promocion.id)}
-                      className="flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition duration-300"
-                      disabled={loadingAccion === promocion.id}
-                    >
-                      {loadingAccion === promocion.id ? (
-                        <span>Procesando...</span>
-                      ) : (
-                        'Pagar Promoción'
-                      )}
-                    </button>
-                  </div>
+                  
                 </div>
               </li>
             ))}

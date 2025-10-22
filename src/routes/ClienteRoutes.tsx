@@ -7,6 +7,7 @@ import ClientePerfil from '../pages/Cliente/ClientePerfil.tsx';
 // Nuevas importaciones para Grupos
 import PromocionList from '../pages/Cliente/Promocion/PromocionList.tsx';
 import SuscripcionList from '../pages/Cliente/Suscripcion/SuscripcionList.tsx';
+import MisSuscripciones from '../pages/Cliente/Suscripcion/MisSuscripciones.tsx';
 import SuscripcionCancelado from '../pages/Cliente/Suscripcion/SuscripcionCancelado.tsx';
 import SuscripcionExitoso from '../pages/Cliente/Suscripcion/SuscripcionExitoso.tsx';
 
@@ -23,6 +24,8 @@ const AdminRoutes: React.FC = () => (
             <Route path="dashboard" element={<Dashboard />} />
 
             <Route path='/suscripciones' element={< SuscripcionList  />} />
+            <Route path="/mis-suscripciones" element={<MisSuscripciones />} />
+
             <Route path='/promociones' element={<PromocionList />} />
             <Route path='/cambiar-contra' element={<ChangePassword />} />
             <Route path='/cliente-perfil' element={<ClientePerfil />} />
