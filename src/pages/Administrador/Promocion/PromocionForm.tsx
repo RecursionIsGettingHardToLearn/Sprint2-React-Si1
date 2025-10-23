@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { promocionSchema, type FormState } from '../../../schemas/schema-promocion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { fetchPromocion, createPromocion, updatePromocion } from '../../../api/api-promocion';
@@ -16,14 +14,24 @@ const PromocionForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [topError, setTopError] = useState('');
 
+  // Definimos el tipo de los valores del formulario manualmente
+  type FormValues = {
+    nombre: string;
+    tipo: string;
+    estado: boolean;
+    descripcion: string;
+    descuento: number;
+    fecha_ini: string;
+    fecha_fin: string;
+  };
+
   const {
     register,
     handleSubmit,
     reset,
     setError,
     formState: { errors, isSubmitting, isDirty },
-  } = useForm<FormState>({
-    resolver: zodResolver(promocionSchema),
+  } = useForm<FormValues>({
     mode: 'onSubmit',
     reValidateMode: 'onChange',
     defaultValues: {
@@ -37,33 +45,59 @@ const PromocionForm: React.FC = () => {
     },
   });
 
- useEffect(() => {
-  const loadPromocion = async () => {
-    if (!isEdit || !id) return;
-    setLoading(true);
-    try {
-      const promocionData = await fetchPromocion(Number(id)); // Ahora asignamos el resultado a promocionData directamente
-      reset({
-        nombre: promocionData.nombre,
-        tipo: promocionData.tipo,
-        estado: promocionData.estado,
-        descripcion: promocionData.descripcion,
-        descuento: promocionData.descuento,
-        fecha_ini: promocionData.fecha_ini,
-        fecha_fin: promocionData.fecha_fin,
-      });
-    } catch (err) {
-      setTopError('No se pudo cargar la promoción.');
-    } finally {
-      setLoading(false);
-    }
-  };
-  loadPromocion();
-}, [id, isEdit, reset]);
+  useEffect(() => {
+    const loadPromocion = async () => {
+      if (!isEdit || !id) return;
+      setLoading(true);
+      try {
+        const promocionData = await fetchPromocion(Number(id)); // Ahora asignamos el resultado a promocionData directamente
+        reset({
+          nombre: promocionData.nombre,
+          tipo: promocionData.tipo,
+          estado: promocionData.estado,
+          descripcion: promocionData.descripcion,
+          descuento: promocionData.descuento,
+          fecha_ini: promocionData.fecha_ini,
+          fecha_fin: promocionData.fecha_fin,
+        });
+      } catch (err) {
+        setTopError('No se pudo cargar la promoción.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPromocion();
+  }, [id, isEdit, reset]);
 
-
-  const onSubmit = async (values: FormState) => {
+  const onSubmit = async (values: FormValues) => {
     setTopError('');
+
+    // Validación personalizada
+    if (!values.nombre.trim()) {
+      setTopError('El nombre es obligatorio.');
+      return;
+    }
+    if (!values.tipo.trim()) {
+      setTopError('El tipo es obligatorio.');
+      return;
+    }
+    if (!values.descripcion.trim()) {
+      setTopError('La descripción es obligatoria.');
+      return;
+    }
+    if (values.descuento < 0 || values.descuento > 100) {
+      setTopError('El descuento debe estar entre 0 y 100.');
+      return;
+    }
+    if (!values.fecha_ini || isNaN(Date.parse(values.fecha_ini))) {
+      setTopError('La fecha de inicio no es válida.');
+      return;
+    }
+    if (!values.fecha_fin || isNaN(Date.parse(values.fecha_fin))) {
+      setTopError('La fecha de fin no es válida.');
+      return;
+    }
+
     try {
       if (isEdit && id) {
         await updatePromocion(Number(id), values);
@@ -76,7 +110,7 @@ const PromocionForm: React.FC = () => {
       if (ui.message) setTopError(ui.message);
 
       if (ui.fields) {
-        (Object.keys(ui.fields) as (keyof FormState)[]).forEach((field) => {
+        (Object.keys(ui.fields) as (keyof FormValues)[]).forEach((field) => {
           const msgs = ui.fields?.[field as string];
           const message = Array.isArray(msgs) ? msgs.join(' ') : String(msgs ?? '');
           if (field in values) {
@@ -246,9 +280,8 @@ const PromocionForm: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`flex items-center px-4 py-2 text-sm font-medium text-white rounded-md transition-colors duration-200 ${
-                  isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                }`}
+                className={`flex items-center px-4 py-2 text-sm font-medium text-white rounded-md transition-colors duration-200 ${isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
               >
                 {isSubmitting ? (
                   <>

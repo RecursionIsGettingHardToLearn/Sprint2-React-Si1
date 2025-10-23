@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchSuscripcion, createSuscripcion, updateSuscripcion } from '../../../api/api-suscripcion';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { suscripcionSchema, type FormState } from '../../../schemas/schema-suscripcion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { toUiError } from '../../../api/error';
@@ -16,43 +14,66 @@ const SuscripcionForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [topError, setTopError] = useState('');
 
+  // Define el tipo de los valores del formulario
+  type FormValues = {
+    nombre: string;
+    precio: number;
+    tipo: string;
+    descripcion: string;
+  };
+
   const {
     register,
     handleSubmit,
     reset,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<FormState>({
-    resolver: zodResolver(suscripcionSchema),
+  } = useForm<FormValues>({
     mode: 'onSubmit',
     reValidateMode: 'onChange',
-    defaultValues: { nombre: '', precio: 0 },
+    defaultValues: { nombre: '', precio: 0, tipo: '', descripcion: '' },
   });
 
-useEffect(() => {
-  const loadSuscripcion = async () => {
-    if (!isEdit || !id) return;
-    setLoading(true);
-    try {
-      const suscripcion = await fetchSuscripcion(Number(id)); // Aquí ya esperamos un objeto tipo 'Suscripcion', no un objeto con 'data'
-      reset({ nombre: suscripcion?.nombre ?? '', tipo: suscripcion?.tipo ?? '', descripcion: suscripcion?.descripcion ?? '', precio: suscripcion?.precio ?? 0 });
-    } catch (err) {
-      setTopError('No se pudo cargar la suscripción.');
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    const loadSuscripcion = async () => {
+      if (!isEdit || !id) return;
+      setLoading(true);
+      try {
+        const suscripcion = await fetchSuscripcion(Number(id)); // Aquí ya esperamos un objeto tipo 'Suscripcion', no un objeto con 'data'
+        reset({ nombre: suscripcion?.nombre ?? '', tipo: suscripcion?.tipo ?? '', descripcion: suscripcion?.descripcion ?? '', precio: suscripcion?.precio ?? 0 });
+      } catch (err) {
+        setTopError('No se pudo cargar la suscripción.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSuscripcion();
+  }, [id, isEdit, reset]);
+
+  const onSubmit = async (values: FormValues) => {
+    // Validación personalizada:
+    const precio = parseFloat(values.precio.toString());
+    if (!values.nombre || values.nombre.trim() === '') {
+      setTopError('El nombre es obligatorio.');
+      return;
     }
-  };
-  loadSuscripcion();
-}, [id, isEdit, reset]);
+    if (isNaN(precio) || precio <= 0) {
+      setTopError('El precio debe ser un número válido y mayor que 0.');
+      return;
+    }
+    if (!values.tipo || values.tipo === 'Seleccionar') {
+      setTopError('Debe seleccionar un tipo.');
+      return;
+    }
 
+    const valuesWithNumberPrecio = { ...values, precio };
 
-  const onSubmit = async (values: FormState) => {
     setTopError('');
     try {
       if (isEdit && id) {
-        await updateSuscripcion(Number(id), values);
+        await updateSuscripcion(Number(id), valuesWithNumberPrecio);
       } else {
-        await createSuscripcion(values);
+        await createSuscripcion(valuesWithNumberPrecio);
       }
       navigate('/administrador/suscripciones');
     } catch (error) {
@@ -60,7 +81,7 @@ useEffect(() => {
       if (ui.message) setTopError(ui.message);
 
       if (ui.fields) {
-        (Object.keys(ui.fields) as (keyof FormState)[]).forEach((field) => {
+        (Object.keys(ui.fields) as (keyof FormValues)[]).forEach((field) => {
           const msgs = ui.fields?.[field as string];
           const message = Array.isArray(msgs) ? msgs.join(' ') : String(msgs ?? '');
           if (field in values) {
@@ -138,6 +159,43 @@ useEffect(() => {
                 </p>
               )}
             </div>
+            <div>
+              <label htmlFor="tipo" className="block text-sm font-medium text-gray-700 mb-1">
+                Tipo
+              </label>
+              <select
+                {...register('tipo')}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="Seleccionar">Seleccionar</option>
+                <option value="Mensual">Mensual</option>
+                <option value="Anual">Anual</option>
+              </select>
+              {errors.tipo && (
+                <p id="tipo-err" className="mt-2 text-sm text-red-600">
+                  {errors.tipo.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="descripcion" className="block text-sm font-medium text-gray-700 mb-1">
+                Descripción
+              </label>
+              <textarea
+                id="descripcion"
+                {...register('descripcion')}
+                placeholder="Descripción de la suscripción"
+                aria-invalid={!!errors.descripcion}
+                aria-describedby={errors.descripcion ? 'descripcion-err' : undefined}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              />
+              {errors.descripcion && (
+                <p id="descripcion-err" className="mt-2 text-sm text-red-600">
+                  {errors.descripcion.message}
+                </p>
+              )}
+            </div>
 
             <div className="flex justify-end space-x-3">
               <button
@@ -151,9 +209,7 @@ useEffect(() => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`flex items-center px-4 py-2 text-sm font-medium text-white rounded-md transition-colors duration-200 ${
-                  isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                }`}
+                className={`flex items-center px-4 py-2 text-sm font-medium text-white rounded-md transition-colors duration-200 ${isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
               >
                 {isSubmitting ? (
                   <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
