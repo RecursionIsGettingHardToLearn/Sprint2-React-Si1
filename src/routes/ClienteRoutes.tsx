@@ -11,7 +11,7 @@ import MisSuscripciones from '../pages/Cliente/Suscripcion/MisSuscripciones.tsx'
 import SuscripcionCancelado from '../pages/Cliente/Suscripcion/SuscripcionCancelado.tsx';
 import SuscripcionExitoso from '../pages/Cliente/Suscripcion/SuscripcionExitoso.tsx';
 
-
+import CancelarSuscriptList from '../pages/Cliente/CancelarSuscripcion/CancelarSuscriptList.tsx';
 
 
 import ChangePassword from '../pages/CambiarContras.tsx';
@@ -32,6 +32,11 @@ const AdminRoutes: React.FC = () => (
 
             <Route path="/suscripcion-pago-exitoso" element={<SuscripcionExitoso />} />
             <Route path="/suscripcion-pago-cancelado" element={<SuscripcionCancelado />} />
+
+            <Route path="/cancelar-suscripcion" element={<CancelarSuscriptList />} />
+
+
+
 
             {/* <Route path="*" element={<Navigate to="/not-found" replace />} />  */}
         </Routes>

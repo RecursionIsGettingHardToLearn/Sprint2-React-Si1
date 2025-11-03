@@ -79,6 +79,7 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
       icon: faBuilding,
       subItems: [
         { to: '/cliente/suscripciones', title: ' Suscripciones', icon: faCalendarAlt },
+        { to: '/cliente/cancelar-suscripcion', title: ' CancelarSuscripcion', icon: faCalendarAlt },
         { to: '/cliente/promociones', title: ' Promociones', icon: faClipboard },
       ],
     },
