@@ -5,9 +5,7 @@ const Welcome: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-8 text-center">
       <div className="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full">
-        <h1 className="text-3xl font-extrabold text-blue-800 mb-2">
-          Geo fit
-        </h1>
+        
         <p className="text-gray-600 mb-6">
           Bienvenido.
         </p>

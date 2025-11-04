@@ -25,7 +25,7 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
         { to: '/administrador/usuarios', title: 'Usuarios', icon: faUsers },
         { to: '/administrador/roles', title: 'Roles', icon: faCogs },
         { to: '/administrador/bitacoras', title: 'Bitacoras', icon: faBoxOpen },
-
+        { to: '/administrador/eviar-correo', title: 'enviar Correo', icon: faClipboard },
        // { to: '/administrador/cambiar-contra', title: 'Cambiar Contraseña', icon: faGear },
         { title: 'Cerrar sesión', icon: faSignOutAlt, action: 'signout' },
       ],
@@ -57,7 +57,8 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
         { to: '/administrador/perfil', title: 'Perfil', icon: faUser },
         { to: '/administrador/suscripciones', title: 'Gestionar Suscripciones', icon: faCalendarAlt },
         { to: '/administrador/promociones', title: 'Gestionar Promociones', icon: faClipboard },
-       // { to: '/administrador/cu14', title: 'Gestionar Pago', icon: faClipboard },
+        { to: '/administrador/comprobantes', title: 'Ver Compobantes', icon: faClipboard },
+
       ],
     },
   ],
@@ -81,6 +82,7 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
         { to: '/cliente/suscripciones', title: ' Suscripciones', icon: faCalendarAlt },
         { to: '/cliente/cancelar-suscripcion', title: ' CancelarSuscripcion', icon: faCalendarAlt },
         { to: '/cliente/promociones', title: ' Promociones', icon: faClipboard },
+        { to: '/cliente/comprobantes', title: ' Ver Comprobantes', icon: faClipboard },
       ],
     },
   ],

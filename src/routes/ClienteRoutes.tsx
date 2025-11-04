@@ -13,6 +13,7 @@ import SuscripcionExitoso from '../pages/Cliente/Suscripcion/SuscripcionExitoso.
 
 import CancelarSuscriptList from '../pages/Cliente/CancelarSuscripcion/CancelarSuscriptList.tsx';
 
+import Vercomprobantes from '../pages/Cliente/VerComprobantes/Vercomprobantes.tsx';
 
 import ChangePassword from '../pages/CambiarContras.tsx';
 
@@ -22,6 +23,7 @@ const AdminRoutes: React.FC = () => (
             <Route index element={<Navigate to="dashboard" replace />} />
             {/* RUTA DEL DASHBOARD */}
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="comprobantes" element={<Vercomprobantes />} />
 
             <Route path='/suscripciones' element={< SuscripcionList  />} />
             <Route path="/mis-suscripciones" element={<MisSuscripciones />} />

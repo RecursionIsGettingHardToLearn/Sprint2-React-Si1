@@ -11,27 +11,28 @@ const SuscripcionList: React.FC = () => {
     const [suscripcionActiva, setSuscripcionActiva] = useState<boolean>(false); // Estado para verificar si hay suscripción activa
 
     useEffect(() => {
-        const loadSuscripciones = async () => {
-            try {
-                setLoading(true);
-                const { data } = await api.get('/suscripciones');
-                setSuscripciones(data.results || data);
+    const loadSuscripciones = async () => {
+        try {
+            setLoading(true);
+            const { data } = await api.get('/suscripciones');
+            setSuscripciones(data.results || data);
 
-                // Verificar si ya existe una suscripción activa
-                const { data: suscripcionesCliente } = await api.get('/suscripciones-clientes/mis-suscripciones');
-                if (suscripcionesCliente.length > 0) {
-                    setSuscripcionActiva(true); // Si ya tiene una suscripción activa
-                }
-            } catch (err) {
-                setError('No se pudieron cargar las suscripciones. Intenta más tarde.');
-                console.error('Error al cargar suscripciones:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
+            // Verificar si ya existe una suscripción activa y no cancelada
+            const { data: suscripcionesCliente } = await api.get('/suscripciones-clientes/mis-suscripciones');
+            const suscripcionActiva = suscripcionesCliente.find((suscripcion: any) => suscripcion.estado_pago && !suscripcion.estado_cancelacion);
+            
+            // Si tiene una suscripción activa y no está cancelada, no puede pagar otra
+            setSuscripcionActiva(!!suscripcionActiva); // Si encuentra una suscripción activa y no cancelada
+        } catch (err) {
+            setError('No se pudieron cargar las suscripciones. Intenta más tarde.');
+            console.error('Error al cargar suscripciones:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        loadSuscripciones();
-    }, []);
+    loadSuscripciones();
+}, []);
 
     const handlePagarConStripe = async (suscripcionId: number) => {
         if (suscripcionActiva) {

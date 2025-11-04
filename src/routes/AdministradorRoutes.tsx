@@ -22,6 +22,12 @@ import PromocionForm from '../pages/Administrador/Promocion/PromocionForm';
 import ClienteList from '../pages/Administrador/Cliente/ClienteList.tsx';
 import ClienteForm from '../pages/Administrador/Cliente/ClienteForm.tsx';
 
+import Vercomprobantes from '../pages/Administrador/Comprobantes/VerComprobantes.tsx';
+
+
+import EnviarCorre from '../pages/Administrador/EnviarCorreo/EnviarCorre.tsx';
+
+
 import ChangePassword from '../pages/CambiarContras';
 import Perfil from '../pages/Perfil.tsx';
 const AdminRoutes: React.FC = () => (
@@ -30,6 +36,8 @@ const AdminRoutes: React.FC = () => (
             <Route index element={<Navigate to="dashboard" replace />} />
             {/* RUTA DEL DASHBOARD */}
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="comprobantes" element={<Vercomprobantes />} />
+            <Route path="eviar-correo" element={<EnviarCorre />} />
 
             <Route path="roles" element={<RolesList />} />
             <Route path="roles/new" element={<RolesForm />} />
