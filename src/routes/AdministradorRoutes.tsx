@@ -22,8 +22,18 @@ import PromocionForm from '../pages/Administrador/Promocion/PromocionForm';
 import ClienteList from '../pages/Administrador/Cliente/ClienteList.tsx';
 import ClienteForm from '../pages/Administrador/Cliente/ClienteForm.tsx';
 
+import DisciplinaList from '../pages/Administrador/Disciplina/DisciplinaList';
+import DisciplinaForm from '../pages/Administrador/Disciplina/DisciplinaForm';
+
+import InstructorList from '../pages/Administrador/Instructor/InstructorList';
+import InstructorDetail from '../pages/Administrador/Instructor/InstructorDetail';
+
+import NutricionistaList from '../pages/Administrador/Nutricionista/NutricionistaList';
+import NutricionistaDetail from '../pages/Administrador/Nutricionista/NutricionistaDetail';
+
 import ChangePassword from '../pages/CambiarContras';
 import Perfil from '../pages/Perfil.tsx';
+
 const AdminRoutes: React.FC = () => (
     <ProtectedRoute requiredRoles={["Administrador"]}>
         <Routes>
@@ -59,6 +69,16 @@ const AdminRoutes: React.FC = () => (
             <Route path="promociones" element={<PromocionList />} />
             <Route path="promociones/new" element={<PromocionForm />} />
             <Route path="promociones/:id/edit" element={<PromocionForm />} />
+
+            <Route path="disciplinas" element={<DisciplinaList />} />
+            <Route path="disciplinas/new" element={<DisciplinaForm />} />
+            <Route path="disciplinas/:id/edit" element={<DisciplinaForm />} />
+
+            <Route path="instructores" element={<InstructorList />} />
+            <Route path="instructores/:id" element={<InstructorDetail />} />
+
+            <Route path="nutricionistas" element={<NutricionistaList />} />
+            <Route path="nutricionistas/:id" element={<NutricionistaDetail />} />
 
             <Route path='/cambiar-contra' element={<ChangePassword />} />
             <Route path='/perfil' element={<Perfil />} />

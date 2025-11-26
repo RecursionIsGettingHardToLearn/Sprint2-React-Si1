@@ -2,8 +2,7 @@
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {
   faHome, faUsers, faCogs, faBoxOpen, faUser,
-  faSignOutAlt, faBuilding, faCalendarAlt, faClipboard
-  , 
+  faSignOutAlt, faBuilding, faCalendarAlt, faClipboard, faChalkboardTeacher, faUserMd
 } from '@fortawesome/free-solid-svg-icons';
 
 export interface MenuItem {
@@ -23,10 +22,10 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
       icon: faUsers,
       subItems: [
         { to: '/administrador/usuarios', title: 'Usuarios', icon: faUsers },
+        { to: '/administrador/instructores', title: 'Instructores', icon: faChalkboardTeacher },
+        { to: '/administrador/nutricionistas', title: 'Nutricionistas', icon: faUserMd },
         { to: '/administrador/roles', title: 'Roles', icon: faCogs },
         { to: '/administrador/bitacoras', title: 'Bitacoras', icon: faBoxOpen },
-
-       // { to: '/administrador/cambiar-contra', title: 'Cambiar Contraseña', icon: faGear },
         { title: 'Cerrar sesión', icon: faSignOutAlt, action: 'signout' },
       ],
     },
@@ -34,30 +33,23 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
       title: 'Módulo Disciplinas',
       icon: faBuilding,
       subItems: [
-      //  { to: '/administrador/cu9', title: 'Actualizar Rutinas', icon: faCog },
-      //  { to: '/administrador/cu12', title: 'Gestionar Reservas', icon: faCalendarAlt },
-     //   { to: '/administrador/cu13', title: 'Administrar Disciplinas', icon: faClipboard },
+       { to: '/administrador/disciplinas', title: 'Administrar Disciplinas', icon: faClipboard },
       ],
     },
     {
       title: 'Módulo Seguimiento',
       icon: faBuilding,
       subItems: [
-       // { to: '/administrador/cu10', title: 'Regsitra Ant. Clini.', icon: faCog },
         { to: '/administrador/clientes', title: 'Gestionar Cliente', icon: faCalendarAlt },
-       // { to: '/administrador/cu8', title: 'Gestionar Segumiento cliente', icon: faClipboard },
       ],
     },
     {
       title: 'Módulo Administracion',
       icon: faBuilding,
       subItems: [
-       // { to: '/administrador/cu15', title: 'Generar Commprobante', icon: faCog },
-       
         { to: '/administrador/perfil', title: 'Perfil', icon: faUser },
         { to: '/administrador/suscripciones', title: 'Gestionar Suscripciones', icon: faCalendarAlt },
         { to: '/administrador/promociones', title: 'Gestionar Promociones', icon: faClipboard },
-       // { to: '/administrador/cu14', title: 'Gestionar Pago', icon: faClipboard },
       ],
     },
   ],
@@ -69,7 +61,6 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
       icon: faUsers,
       subItems: [
         { to: '/cliente/cliente-perfil', title: 'Perfil', icon: faUser },
-       // { to: '/cliente/cambiar-contra', title: 'Cambiar Contraseña', icon: faGear },
         { title: 'Cerrar sesión', icon: faSignOutAlt, action: 'signout' },
       ],
     },
@@ -83,6 +74,4 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
       ],
     },
   ],
-
-
 };

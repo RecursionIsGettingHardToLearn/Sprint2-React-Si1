@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { fetchClients, deleteClient } from '../../../api/api-cliente';
 import { toUiError } from '../../../api/error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { type CustomClientResponse } from '../../../types/type-cliente';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +12,14 @@ const ClientList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [confirmingDelete, setConfirmingDelete] = useState<number | null>(null);
+
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+
+  const filteredClients = clients.filter(client =>
+    (client.usuario_username?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (client.email?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     const loadClients = async () => {
@@ -67,15 +74,30 @@ const ClientList: React.FC = () => {
           </Link>
         </div>
 
-        {clients.length === 0 && (
+        <div className="mb-6 relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <FontAwesomeIcon icon={faSearch} className="text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Buscar por usuario ..."
+            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        {filteredClients.length === 0 && (
           <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
-            <p className="mt-4 text-gray-500">No hay clientes registrados aún.</p>
+            <p className="mt-4 text-gray-500">
+              {searchTerm ? 'No se encontraron clientes que coincidan con la búsqueda.' : 'No hay clientes registrados aún.'}
+            </p>
           </div>
         )}
 
-        {clients.length > 0 && (
+        {filteredClients.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {clients.map((client) => (
+            {filteredClients.map((client) => (
               <div
                 key={client.usuario} // Usar 'usuario' como key
                 className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow duration-200 flex flex-col relative"

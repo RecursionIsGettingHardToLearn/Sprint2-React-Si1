@@ -20,11 +20,11 @@ const LayoutWithSidebar = () => {
   const { user } = useAuth();
   if (!user) return null; // o un spinner
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden bg-gray-50">
       <Sidebar />
-      <div className="flex-1 p-4 overflow-auto">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <Outlet />
-      </div>
+      </main>
     </div>
   );
 };

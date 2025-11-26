@@ -2,14 +2,14 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { menuItemsByRole, type MenuItem } from '../../config/menuConfig'; // <--- Import MenuItem here
+import { menuItemsByRole, type MenuItem } from '../../config/menuConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faTimes,faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faTimes, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import DropdownMenu from '../DropdownMenu';
 
 const Sidebar: React.FC = () => {
   const { user } = useAuth();
-  const role = user?.rol
+  const role = user?.rol;
 
   // Explicitly type menuItems as an array of MenuItem
   const menuItems: MenuItem[] = role && menuItemsByRole[role as keyof typeof menuItemsByRole] || [];
@@ -42,21 +42,21 @@ const Sidebar: React.FC = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 h-full flex flex-col transition-transform duration-300 ease-in-out bg-[#f10505] shadow-xl
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:relative md:w-64`}
+        className={`fixed inset-y-0 left-0 z-50 w-72 h-full flex flex-col transition-transform duration-300 ease-in-out bg-slate-900 shadow-xl
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:relative md:w-72`}
       >
-        <div className="flex items-center justify-between p-6">
-          <h1 className="text-xl font-extrabold text-gray-800">App</h1>
+        <div className="flex items-center justify-between p-6 border-b border-slate-800">
+          <h1 className="text-2xl font-extrabold text-white tracking-wider">App</h1>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-2 text-gray-600 transition-colors duration-300 rounded-full hover:bg-gray-100 md:hidden focus:outline-none"
+            className="p-2 text-gray-400 transition-colors duration-300 rounded-full hover:bg-slate-800 md:hidden focus:outline-none"
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
         </div>
-        <nav className="flex-1 overflow-y-auto">
+        <nav className="flex-1 overflow-y-auto py-4">
           <ul>
-            {menuItems.map((item: MenuItem) => ( // <--- Also good practice to explicitly type 'item' in map
+            {menuItems.map((item: MenuItem) => (
               <li key={item.title} className="py-1">
                 {item.subItems ? (
                   <DropdownMenu item={item} onItemClick={handleItemClick} />
@@ -64,12 +64,12 @@ const Sidebar: React.FC = () => {
                   <NavLink
                     to={item.to || '#'}
                     className={({ isActive }) =>
-                      `flex items-center px-6 py-3 text-sm font-medium transition-colors duration-300 ease-in-out rounded-lg mx-2
-                      ${isActive ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`
+                      `flex items-center px-6 py-3 text-base font-medium transition-colors duration-300 ease-in-out rounded-lg mx-2
+                      ${isActive ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'}`
                     }
                     onClick={() => handleItemClick()}
                   >
-                    <FontAwesomeIcon icon={item.icon || faQuestionCircle} className="mr-3" />
+                    <FontAwesomeIcon icon={item.icon || faQuestionCircle} className="mr-3 w-5 text-center" />
                     {item.title}
                   </NavLink>
                 )}
