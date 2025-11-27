@@ -1,22 +1,20 @@
-// src/config/menuItems.ts
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import {
   faHome, faUsers, faCogs, faBoxOpen, faUser,
-  faSignOutAlt, faBuilding, faCalendarAlt, faClipboard, faChalkboardTeacher, faUserMd
+  faSignOutAlt, faBuilding, faCalendarAlt, faClipboard, faChalkboardTeacher, faUserMd, faFileMedical
 } from '@fortawesome/free-solid-svg-icons';
 
 export interface MenuItem {
-  to?: string; // Make 'to' optional for parent items
+  to?: string;
   title: string;
   icon?: IconProp;
-  action?: 'signout'; // Puedes extender esto si tienes más acciones
-  subItems?: MenuItem[]; // New property for dropdown items
+  action?: 'signout';
+  subItems?: MenuItem[];
 }
 
 export const menuItemsByRole: Record<string, MenuItem[]> = {
   Administrador: [
     { to: '/administrador/dashboard', title: 'DASHBOARD', icon: faHome },
-
     {
       title: 'Módulo Usuarios',
       icon: faUsers,
@@ -33,7 +31,9 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
       title: 'Módulo Disciplinas',
       icon: faBuilding,
       subItems: [
-       { to: '/administrador/disciplinas', title: 'Administrar Disciplinas', icon: faClipboard },
+        { to: '/administrador/disciplinas', title: 'Administrar Disciplinas', icon: faClipboard },
+        { to: '/administrador/horarios', title: 'Horarios', icon: faCalendarAlt },
+        { to: '/administrador/reservas', title: 'Reservas', icon: faCalendarAlt },
       ],
     },
     {
@@ -41,6 +41,7 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
       icon: faBuilding,
       subItems: [
         { to: '/administrador/clientes', title: 'Gestionar Cliente', icon: faCalendarAlt },
+        { to: '/administrador/antecedentes-clinicos', title: 'Antecedentes', icon: faFileMedical },
       ],
     },
     {
@@ -55,7 +56,6 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
   ],
   Cliente: [
     { to: '/cliente/dashboard', title: 'DASHBOARD', icon: faHome },
-
     {
       title: 'Módulo Usuarios',
       icon: faUsers,
@@ -64,7 +64,14 @@ export const menuItemsByRole: Record<string, MenuItem[]> = {
         { title: 'Cerrar sesión', icon: faSignOutAlt, action: 'signout' },
       ],
     },
-  
+    {
+      title: 'Módulo Clases',
+      icon: faCalendarAlt,
+      subItems: [
+        { to: '/cliente/horarios', title: 'Horarios Disponibles', icon: faCalendarAlt },
+        { to: '/cliente/mis-reservas', title: 'Mis Reservas', icon: faCalendarAlt },
+      ],
+    },
     {
       title: 'Módulo Administracion',
       icon: faBuilding,

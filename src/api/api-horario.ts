@@ -18,3 +18,17 @@ export const fetchHorarios = async (params?: any): Promise<Horario[]> => {
   const response = await axiosInstance.get<Horario[]>('/horarios/', { params });
   return response.data;
 };
+
+export const createHorario = async (data: Omit<Horario, 'id'>): Promise<Horario> => {
+  const response = await axiosInstance.post<Horario>('/horarios/', data);
+  return response.data;
+};
+
+export const updateHorario = async (id: number, data: Partial<Horario>): Promise<Horario> => {
+  const response = await axiosInstance.put<Horario>(`/horarios/${id}/`, data);
+  return response.data;
+};
+
+export const deleteHorario = async (id: number): Promise<void> => {
+  await axiosInstance.delete(`/horarios/${id}/`);
+};

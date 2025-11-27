@@ -31,6 +31,11 @@ import InstructorDetail from '../pages/Administrador/Instructor/InstructorDetail
 import NutricionistaList from '../pages/Administrador/Nutricionista/NutricionistaList';
 import NutricionistaDetail from '../pages/Administrador/Nutricionista/NutricionistaDetail';
 
+import AntecedenteList from '../pages/Administrador/Antecedente/AntecedenteList';
+import HorarioList from '../pages/Administrador/Horario/HorarioList';
+import HorarioForm from '../pages/Administrador/Horario/HorarioForm';
+import ReservaList from '../pages/Administrador/Reserva/ReservaList';
+
 import ChangePassword from '../pages/CambiarContras';
 import Perfil from '../pages/Perfil.tsx';
 
@@ -38,15 +43,12 @@ const AdminRoutes: React.FC = () => (
     <ProtectedRoute requiredRoles={["Administrador"]}>
         <Routes>
             <Route index element={<Navigate to="dashboard" replace />} />
-            {/* RUTA DEL DASHBOARD */}
             <Route path="dashboard" element={<Dashboard />} />
 
             <Route path="roles" element={<RolesList />} />
             <Route path="roles/new" element={<RolesForm />} />
             <Route path="roles/:id/edit" element={<RolesForm />} />
-            {/* RUTA DEL usuarios */}
 
-            {/* RUTA DEL DASHBOARD */}
             <Route path="bitacoras" element={<BitacoraList />} />
             <Route path="bitacoras/:id" element={<BitacoraDetail />} />
 
@@ -54,9 +56,8 @@ const AdminRoutes: React.FC = () => (
             <Route path="usuarios/:id" element={<UserDetail />} />
             <Route path="usuarios/new" element={<UserForms />} />
             <Route path="usuarios/:id/editar" element={<UserForms />} />
-            <Route path="usuarios/:id/cambiar-contrasena" element={<ChangePasswordByUser />} /> {/* <--- NEW ROUTE */}
+            <Route path="usuarios/:id/cambiar-contrasena" element={<ChangePasswordByUser />} />
 
-            // Agregar rutas de suscripciones
             <Route path="suscripciones" element={<SuscripcionList />} />
             <Route path="suscripciones/new" element={<SuscripcionForm />} />
             <Route path="suscripciones/:id/edit" element={<SuscripcionForm />} />
@@ -64,7 +65,6 @@ const AdminRoutes: React.FC = () => (
             <Route path="clientes" element={<ClienteList />} />
             <Route path="clientes/nuevo" element={<ClienteForm />} />
             <Route path="clientes/:id/editar" element={<ClienteForm />} />
-
 
             <Route path="promociones" element={<PromocionList />} />
             <Route path="promociones/new" element={<PromocionForm />} />
@@ -80,9 +80,15 @@ const AdminRoutes: React.FC = () => (
             <Route path="nutricionistas" element={<NutricionistaList />} />
             <Route path="nutricionistas/:id" element={<NutricionistaDetail />} />
 
-            <Route path='/cambiar-contra' element={<ChangePassword />} />
-            <Route path='/perfil' element={<Perfil />} />
+            <Route path="antecedentes-clinicos" element={<AntecedenteList />} />
 
+            <Route path="horarios" element={<HorarioList />} />
+            <Route path="horarios/new" element={<HorarioForm />} />
+
+            <Route path="reservas" element={<ReservaList />} />
+
+            <Route path="cambiar-contra" element={<ChangePassword />} />
+            <Route path="perfil" element={<Perfil />} />
         </Routes>
     </ProtectedRoute>
 );

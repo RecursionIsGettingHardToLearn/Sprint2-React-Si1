@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchNutricionista } from '../../../api/api-nutricionista';
 import { fetchAntecedentes, type Antecedente } from '../../../api/api-antecedente';
 import { toUiError } from '../../../api/error';
 import { type Nutricionista } from '../../../types/type-nutricionista';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faUserMd, faFileMedical, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faUserMd, faFileMedical, faCalendarAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
+import AntecedenteForm from './AntecedenteForm';
 
 const NutricionistaDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,36 +16,55 @@ const NutricionistaDetail: React.FC = () => {
   const [antecedentes, setAntecedentes] = useState<Antecedente[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
+  const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => {
-    const loadData = async () => {
-      if (!id) return;
-      setLoading(true);
-      try {
-        const [nutriData, antData] = await Promise.all([
-          fetchNutricionista(+id),
-          fetchAntecedentes({ nutricionista: id })
-        ]);
-        
-        setNutricionista(nutriData);
-        setAntecedentes(antData);
-      } catch (err) {
-        const uiError = toUiError(err);
-        setError(uiError.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+  const loadData = useCallback(async () => {
+    if (!id) return;
+    setLoading(true);
+    try {
+      const [nutriData, antData] = await Promise.all([
+        fetchNutricionista(+id),
+        fetchAntecedentes({ nutricionista: id })
+      ]);
+      
+      setNutricionista(nutriData);
+      setAntecedentes(antData);
+    } catch (err) {
+      const uiError = toUiError(err);
+      setError(uiError.message);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  if (loading) return <div className="p-6 text-center text-gray-500">Cargando detalles...</div>;
-  if (error) return <div className="p-6 text-red-500 bg-red-50 border border-red-200 rounded-lg">{error}</div>;
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const handleFormSuccess = () => {
+    setShowForm(false);
+    loadData(); // Reload data to show new antecedent
+  };
+
+  if (loading && !nutricionista) return <div className="p-6 text-center text-gray-500">Cargando detalles...</div>;
+  if (error && !nutricionista) return <div className="p-6 text-red-500 bg-red-50 border border-red-200 rounded-lg">{error}</div>;
   if (!nutricionista) return <div className="p-6 text-center text-gray-500">Nutricionista no encontrado</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
+      {/* Modal Overlay */}
+      {showForm && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-900 bg-opacity-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl">
+            <AntecedenteForm 
+              nutricionistaId={Number(id)} 
+              onSuccess={handleFormSuccess} 
+              onCancel={() => setShowForm(false)} 
+            />
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <button
           onClick={() => navigate('/administrador/nutricionistas')}
@@ -82,10 +102,20 @@ const NutricionistaDetail: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
           {/* Antecedentes Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-              <FontAwesomeIcon icon={faFileMedical} className="mr-2 text-green-600" />
-              Antecedentes Registrados
-            </h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-gray-900 flex items-center">
+                <FontAwesomeIcon icon={faFileMedical} className="mr-2 text-green-600" />
+                Antecedentes Registrados
+              </h2>
+              <button
+                onClick={() => setShowForm(true)}
+                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+              >
+                <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                Registrar Antecedente
+              </button>
+            </div>
+
             {antecedentes.length === 0 ? (
               <p className="text-gray-500 text-sm">No ha registrado antecedentes aún.</p>
             ) : (
